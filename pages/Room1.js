@@ -1,9 +1,14 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { useEffect } from 'react';
+import { StyleSheet, Text, View} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from '../GlobalStyles';
 
-export default function Room1(){
+export default function Room1({}){
+
+    
+ 
     return(
-        <View>
+        <View style={styles.container}>
             <Text>Room1</Text>
             
         </View>
