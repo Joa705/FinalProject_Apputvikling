@@ -6,6 +6,9 @@ import styles from './GlobalStyles';
 import Main from './pages/Main';
 import Room1 from './pages/Room1';
 import Room2 from './pages/Room2';
+import Room from './pages/Room';
+import EditPatient from './pages/EditPatient';
+import AddPatient from './pages/AddPatient';
 
 
 LogBox.ignoreLogs(['Setting a timer'])
@@ -20,8 +23,10 @@ export default function App() {
     <NavigationContainer>
     <Stack.Navigator>
       <Stack.Screen name="Main" component={Main}/>
-      <Stack.Screen name="Room1" component={Room1} />
-      <Stack.Screen name="Room2" component={Room2} />
+      <Stack.Screen name="EditPatient" component={EditPatient} />
+      <Stack.Screen name="AddPatient" component={AddPatient} />
+      <Stack.Screen name="Room" component={Room} />
+      
     </Stack.Navigator>
     </NavigationContainer>
  

@@ -1,7 +1,9 @@
 import {useEffect, useState, useRef} from 'react'
 import {ImageBackground ,StyleSheet, Text, View, TouchableOpacity, Dimensions, Alert} from 'react-native';
+import { Button, TextInput } from 'react-native';
+import { DataTable, IconButton } from 'react-native-paper';
 import styles from '../GlobalStyles';
-import {GetPatient, GetPatientAndStoreLocal, updatePatient} from '../functions/Firestore'
+import {GetPatient, GetPatientsAndStoreLocal, GetPatients, updatePatient} from '../functions/Firestore'
 import { getRandomNumber } from '../functions/Storage';
 
   //Screen dimentions
@@ -13,9 +15,13 @@ import { getRandomNumber } from '../functions/Storage';
 export default function Main({navigation}){
   
     //useStates
-    const [patient1, SetPatient1] = useState([])
-    const [patient2, SetPatient2] = useState([])
 
+    const [selectedPatient, setSelectedPatient] = useState("");
+    const [patientData, setPatientData] = useState([]);
+
+    const clearSelectedPatient = async () => {
+        setSelectedPatient(null);
+      }
 
     // Alert messages if patients is in critical condition or dead
     const createTwoButtonAlert = () =>
@@ -32,20 +38,8 @@ export default function Main({navigation}){
       ]
     );
 
-    
-    // Get the firestore id of current patient
-    const getPatientId = (room, patient) =>{
-        let patTemp = patient.find(dat => dat.Room == room);
-        let patResult = patTemp.id;
-        console.log(patResult);
-
-        return patResult
-    }
-
-
     useEffect(() => {
-        GetPatientAndStoreLocal(SetPatient1, "1");
-        GetPatientAndStoreLocal(SetPatient2, "2");
+        GetPatientsAndStoreLocal(setPatientData)
     }, [])
 
 
@@ -53,27 +47,23 @@ export default function Main({navigation}){
     useEffect(() =>{
 
         // Update the status of patient using random number generator
-        const updatePatientStatus = (id, patient) =>{
-            const idTemp = getPatientId(id, patient);
+        const updatePatientStatus = (id) =>{
             const updateHeart = getRandomNumber(0, 200);
             const updateBreath = getRandomNumber(0, 100);
             const updateOxygen = getRandomNumber(0, 100);
 
-            updatePatient(idTemp, updateHeart, updateBreath, updateOxygen);
+            updatePatient(id, updateHeart, updateBreath, updateOxygen);
         }
 
         // Fetch some data every minute.
         const Interval = setInterval(() => {
-            console.log("Inteval");
+            console.log("Interval");
 
-            // Update patient status
-            updatePatientStatus("1", patient1);
-            updatePatientStatus("2", patient2);
+            patientData.map((patient) => { 
+                updatePatientStatus(patient.id);
+            })
 
-            // get patient from firestore
-            GetPatientAndStoreLocal(SetPatient1, "1");
-            GetPatientAndStoreLocal(SetPatient2, "2");
-
+            GetPatientsAndStoreLocal(setPatientData);
 
                   
         }, 1000 * 3)
@@ -82,53 +72,68 @@ export default function Main({navigation}){
             clearInterval(Interval)
         }
 
-    }, [patient1, patient2])
+    }, [patientData])
 
 
 
     return(
-        <View style={styles.container}>
+
+        
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             
-            <View style={MainStyles.topContainer}>
-                {patient1.map((doc) =>{
-                    return(
-                        <View style={{alignItems: 'center', justifyContent: 'center'}} key={doc.id}>
-                            <Text>Room: {doc.Room}</Text>
-                            <Text>Patient Name: {doc.Name}</Text>
-                            <Text>Heart Rate: {doc.Heart}</Text>
-                      
-                        </View>
-                    )
-                })}
-                
-                <TouchableOpacity style={styles.ButtonContainer} onPress={() => navigation.navigate("Room1")}>
-                    <Text style={styles.ButtonText}>Room1</Text>
-                </TouchableOpacity>
-            </View>
-           
-            
+            <Text>Patient Rooms</Text>
 
-            <View style={{height:4, width: windowWidth, backgroundColor: "grey"}}></View>
+                <DataTable>
+                    <DataTable.Header>
+                    <DataTable.Title>Room Nr</DataTable.Title>
+                    <DataTable.Title>Name</DataTable.Title>
+                    <DataTable.Title>HR</DataTable.Title>
+                    <DataTable.Title>BR</DataTable.Title>
+                    <DataTable.Title>OLevel</DataTable.Title>
+                    <DataTable.Cell numeric>
+                            <IconButton icon="" onPress={() => setSelectedPatient(patient.id)} disabled />
+                    </DataTable.Cell>
+                </DataTable.Header>
+
+                    {patientData.map((patient) => {
+                    return <View key={patient.id}>
+                        
+                        <DataTable.Row>
+                            <DataTable.Cell>{patient.Room}</DataTable.Cell>
+                            <DataTable.Cell>{patient.Name}</DataTable.Cell>
+                            <DataTable.Cell>{patient.Heart}</DataTable.Cell>
+                            <DataTable.Cell>{patient.Breath}</DataTable.Cell>
+                            <DataTable.Cell>{patient.Oxygen}</DataTable.Cell>
+
+                            <DataTable.Cell numeric>
+                            <IconButton icon="eye" onPress={() => setSelectedPatient(patient.id)} />
+                            </DataTable.Cell>
+                            
+                        </DataTable.Row>
 
 
-            <View style={MainStyles.botContainer}>
-            {patient2.map((doc) =>{
-                    return(
-                        <View style={{alignItems: 'center', justifyContent: 'center'}} key={doc.id}>
-                            <Text>Room: {doc.Room}</Text>
-                            <Text>Patient Name: {doc.Name}</Text>
-                            <Text>Heart Rate: {doc.Heart}</Text>
-                        </View>
-                    )
-                })}
 
-                <TouchableOpacity style={styles.ButtonContainer} onPress={() => navigation.navigate("Room2")}>
-                    <Text style={styles.ButtonText}>Room2</Text>
-                </TouchableOpacity>
-            </View>
-              
 
-            
+                    </View>
+                    
+                    })}
+
+                </DataTable>
+
+                <Button
+                    title="Add Patient"
+                    onPress={() => {navigation.navigate('AddPatient', {selectedPatient}); clearSelectedPatient();}}
+                />
+
+                <Button disabled={selectedPatient ? false : true}
+                    title="Edit Patient Details"
+                    onPress={() => {navigation.navigate('EditPatient', {selectedPatient}); clearSelectedPatient();}}
+                />
+
+                <Button disabled={selectedPatient ? false : true}
+                    title="Show Details"
+                    onPress={() => {navigation.navigate('Room', {selectedPatient}); clearSelectedPatient();}}
+                />
 
         </View>
     )

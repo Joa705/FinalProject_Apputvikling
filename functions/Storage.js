@@ -2,10 +2,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 // Store userdata in localstorage
-export const storeDataLocal = async (Room, Data)  => {
+export const storeDataLocal = async (id, Data)  => {
     try{
-        await AsyncStorage.setItem(Room, JSON.stringify(Data)); 
-        console.log("Stored data local for " + Room)
+        await AsyncStorage.setItem(toString(id), JSON.stringify(Data)); 
+        console.log("Stored data locally")
     }
     catch (error){
         console.log(error);
@@ -13,9 +13,9 @@ export const storeDataLocal = async (Room, Data)  => {
 }
 
 // Get userdata from localstorage
-export const getDataLocal = async (Room, setData) => {
+export const getDataLocal = async (id, setData) => {
     try{
-        const temp = await AsyncStorage.getItem(Room);
+        const temp = await AsyncStorage.getItem(toString(id));
         if(temp !== null){
             const data = JSON.parse(temp);
 
