@@ -1,5 +1,5 @@
 import {useEffect, useState, useRef} from 'react'
-import {ImageBackground ,StyleSheet, Text, View, TouchableOpacity, Dimensions, Alert} from 'react-native';
+import {ImageBackground ,StyleSheet, Text, View, TouchableOpacity, Dimensions, Alert, ScrollView} from 'react-native';
 import { Button, TextInput } from 'react-native';
 import { DataTable, IconButton } from 'react-native-paper';
 import styles from '../GlobalStyles';
@@ -18,11 +18,18 @@ export default function Main({navigation}){
 
     const [selectedPatient, setSelectedPatient] = useState("");
     const [patientData, setPatientData] = useState([]);
+    const [test, SetTest] = useState("")
 
     
     const clearSelectedPatient = async () => {
         setSelectedPatient(null);
       }
+
+    
+    // When routing back from "AddPatient" side, call this function
+    const onSelect = () => {
+        GetPatientsAndStoreLocal(setPatientData)
+    }
 
     // Alert messages if patients is in critical condition or dead
     const createTwoButtonAlert = () =>
@@ -45,7 +52,10 @@ export default function Main({navigation}){
 
 
 
+
+
     useEffect(() =>{
+
 
         // Update the status of patient using random number generator
         const updatePatientStatus = (id, chart) =>{
@@ -69,13 +79,13 @@ export default function Main({navigation}){
             GetPatientsAndStoreLocal(setPatientData);
 
                   
-        }, 1000 * 3)
+        }, 1000 * 60)
 
         return () => {
             clearInterval(Interval)
         }
 
-    }, [patientData])
+    }, [patientData, onSelect])
 
 
 
@@ -84,10 +94,15 @@ export default function Main({navigation}){
         
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             
+            <View style={MainStyles.toptitleContainer}>
+            <Text style={{position: 'absolute', top: 50}}>Patient Rooms</Text>
+            </View>
+
+
             <View style={MainStyles.topContainer}>
 
-            <Text>Patient Rooms</Text>
-
+                   
+                   
                 <DataTable>
                     <DataTable.Header>
                     <DataTable.Title>Room Nr</DataTable.Title>
@@ -98,7 +113,10 @@ export default function Main({navigation}){
                     <DataTable.Cell numeric>
                             <IconButton icon="" onPress={() => setSelectedPatient(patient.id)} disabled />
                     </DataTable.Cell>
-                </DataTable.Header>
+
+                    </DataTable.Header>
+
+                    <ScrollView style={MainStyles.scrollView}>
 
                     {patientData.map((patient) => {
                     return <View key={patient.id}>
@@ -123,7 +141,11 @@ export default function Main({navigation}){
                     
                     })}
 
-                </DataTable>
+                 </ScrollView>
+
+                </DataTable> 
+
+
 
 
             </View>
@@ -131,7 +153,7 @@ export default function Main({navigation}){
 
             <View style={MainStyles.botContainer}>
                 
-            <TouchableOpacity style={styles.ButtonContainer} onPress={() => {navigation.navigate('AddPatient', {"selectedPatient" : selectedPatient, "RoomId": patientData.length + 1}); clearSelectedPatient();}}>
+            <TouchableOpacity style={styles.ButtonContainer} onPress={() => {navigation.navigate('AddPatient', {"selectedPatient" : selectedPatient, "RoomId": patientData.length + 1, "onSelect": onSelect}); clearSelectedPatient();}}>
                     <Text style={styles.ButtonText}>Add Patient</Text>
                 </TouchableOpacity>
                 
@@ -166,8 +188,14 @@ export default function Main({navigation}){
 
 
 const MainStyles = StyleSheet.create({
+    toptitleContainer: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: windowWidth,
+    },
     topContainer: {
-        flex: 2,
+        flex: 3,
         alignItems: 'center',
         justifyContent: 'center',
         width: windowWidth,
@@ -175,10 +203,14 @@ const MainStyles = StyleSheet.create({
         
     },
     botContainer: {
-        flex: 1,
+        flex: 2,
         alignItems: 'center',
         justifyContent: 'center',
         width: windowWidth,
            
-    }
+    },
+    scrollView: {
+        borderWidth: 1,
+        width: windowWidth
+      },
 });

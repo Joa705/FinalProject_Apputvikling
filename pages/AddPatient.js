@@ -19,15 +19,24 @@ export default function AddPatient({navigation, route}){
 
   
 
+    const addNewPatient = () => {
+      if(newName.length <= 0){return}
+      if(newLname.length <= 0){return}
+      if(newAge.length <= 0){return}
+
+      
+      addPatient(navigation, newName, RoomId, newLname, newAge)
+      route.params.onSelect()
+    }
+
     return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <View style={styles.container}>
 
         <TextInput style={styles.input} onChangeText={setName} value={newName} placeholder="First Name"/>
         <TextInput style={styles.input} onChangeText={setNewLName} value={newLname} placeholder="Last Name"/>
-        <Text>{RoomId.toString()}</Text>
         <TextInput style={styles.input} onChangeText={SetNewAge} value={newAge} placeholder="Age" keyboardType='number-pad'/>
 
-        <Button title="Confirm" onPress={() => addPatient(navigation, newName, RoomId.toString(), newLname, newAge)}/>
+        <Button title="Confirm" onPress={() => addNewPatient()}/>
         
         <Button title="Go back" onPress={() => navigation.goBack()} />
         </View>
