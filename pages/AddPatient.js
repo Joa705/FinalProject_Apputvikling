@@ -11,12 +11,11 @@ import { Button, TextInput } from 'react-native';
 const screenWidth = Dimensions.get("window").width;
 
 export default function AddPatient({navigation, route}){
-    // const { selectedPatient } = route.params;
+    const { selectedPatient, RoomId } = route.params;
     
     const [newName, setName] = useState("");
     const [newLname, setNewLName] = useState("");
     const [newAge, SetNewAge] = useState("");
-    const [newRoom, SetRoom] = useState("");
 
   
 
@@ -25,10 +24,10 @@ export default function AddPatient({navigation, route}){
 
         <TextInput style={styles.input} onChangeText={setName} value={newName} placeholder="First Name"/>
         <TextInput style={styles.input} onChangeText={setNewLName} value={newLname} placeholder="Last Name"/>
-        <TextInput style={styles.input} onChangeText={SetRoom} value={newRoom} placeholder="Room"/>
+        <Text>{RoomId.toString()}</Text>
         <TextInput style={styles.input} onChangeText={SetNewAge} value={newAge} placeholder="Age" keyboardType='number-pad'/>
 
-        <Button title="Confirm" onPress={() => addPatient(navigation, newName, newRoom, newLname, newAge)}/>
+        <Button title="Confirm" onPress={() => addPatient(navigation, newName, RoomId.toString(), newLname, newAge)}/>
         
         <Button title="Go back" onPress={() => navigation.goBack()} />
         </View>

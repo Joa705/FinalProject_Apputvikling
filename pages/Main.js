@@ -131,7 +131,7 @@ export default function Main({navigation}){
 
             <View style={MainStyles.botContainer}>
                 
-            <TouchableOpacity style={styles.ButtonContainer} onPress={() => {navigation.navigate('AddPatient', {selectedPatient}); clearSelectedPatient();}}>
+            <TouchableOpacity style={styles.ButtonContainer} onPress={() => {navigation.navigate('AddPatient', {"selectedPatient" : selectedPatient, "RoomId": patientData.length + 1}); clearSelectedPatient();}}>
                     <Text style={styles.ButtonText}>Add Patient</Text>
                 </TouchableOpacity>
                 
