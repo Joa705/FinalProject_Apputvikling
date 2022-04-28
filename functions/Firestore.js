@@ -88,8 +88,8 @@ import {storeDataLocal, getRandomNumber} from '../functions/Storage'
   
     }
 
-    export const addPatient = async (navigation, newName, newRoom) => {
+    export const addPatient = async (navigation, newName, newRoom, newLname, newAge) => {
         const patientRef = collection(db, "XYZ")
-        await addDoc(patientRef, {Name: newName, Room: newRoom, Heart: getRandomNumber(0, 200), Breath: getRandomNumber(0, 100), Oxygen: getRandomNumber(0, 100), Chart: 0});
+        await addDoc(patientRef, {Name: newName, LName: newLname, Age: newAge, Room: newRoom, Heart: getRandomNumber(0, 200), Breath: getRandomNumber(0, 100), Oxygen: getRandomNumber(0, 100), Chart: 0, Date: Timestamp.now()});
         navigation.goBack();
       };

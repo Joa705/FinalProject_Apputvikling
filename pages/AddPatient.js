@@ -14,15 +14,21 @@ export default function AddPatient({navigation, route}){
     const { selectedPatient } = route.params;
     
     const [newName, setName] = useState("");
-    const [newRoom, setRoom] = useState("");
+    const [newLname, setNewLName] = useState("");
+    const [newAge, SetNewAge] = useState("");
+    const [newRoom, SetRoom] = useState("");
+
+  
 
     return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
 
-        <TextInput style={styles.input} onChangeText={setName} value={newName} placeholder="Name"/>
-        <TextInput style={styles.input} onChangeText={setRoom} value={newRoom} placeholder="Room"/>
+        <TextInput style={styles.input} onChangeText={setName} value={newName} placeholder="First Name"/>
+        <TextInput style={styles.input} onChangeText={setNewLName} value={newLname} placeholder="Last Name"/>
+        <TextInput style={styles.input} onChangeText={SetRoom} value={newRoom} placeholder="Room"/>
+        <TextInput style={styles.input} onChangeText={SetNewAge} value={newAge} placeholder="Age" keyboardType='number-pad'/>
 
-        <Button title="Confirm" onPress={() => addPatient(navigation, selectedPatient, newName, newRoom)}/>
+        <Button title="Confirm" onPress={() => addPatient(navigation, selectedPatient, newName, newRoom, newLname, newAge)}/>
         
         <Button title="Go back" onPress={() => navigation.goBack()} />
         </View>
