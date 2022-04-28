@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import {ImageBackground, StyleSheet, Text, View, ScrollView, Image} from 'react-native';
+import {ImageBackground, StyleSheet, Text, View, ScrollView, Image, TouchableOpacity} from 'react-native';
 import styles from '../GlobalStyles';
 import {getDataLocal} from '../functions/Storage'
 import { BarChart, LineChart } from "react-native-chart-kit";
 import { Dimensions } from "react-native";
 import {chartStyle, chartConfig} from '../functions/Charts'
 import { heartReatIcon, breathIcon, oxygenIcon } from '../functions/Icons';
-
+import {getPatientChart, getLastPatientChart} from '../functions/Firestore'
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -14,10 +14,46 @@ export default function Room({navigation, route}){
 
     const { selectedPatient } = route.params;
     const [patient, SetPatient] = useState([])
+    const [currentChart, SetCurrentChart] = useState([2,3,4,5,6])
+    const [currentChartName, SetCurrentChartName] = useState(["Heart Rate"])
+    const [heartChart, SetHeartChart] = useState([])
+    const [breathChart, SetBreathChart] = useState([])
+    const [oxygenChart, SetOxygenChart] = useState([])
+
+
+    const displayNewChart = (newChart, name) => {
+        SetCurrentChart(newChart);
+        SetCurrentChartName([name])
+    }
+
+    const chartData = () => {
+        const data = {
+            labels: ["1", "2", "3", "4", "5"],
+            datasets: [
+              {
+                data: currentChart
+              }
+            ],
+            legend: currentChartName // optional
+          };
+          
+          return(
+            <LineChart
+            style={chartStyle.container}
+            data={data}
+            width={screenWidth - screenWidth * 0.05}
+            height={250}
+            chartConfig={chartConfig}
+            verticalLabelRotation={0} 
+            />
+          )
+    }
+  
 
 
     useEffect(() => {
         getDataLocal(selectedPatient, SetPatient);
+        getLastPatientChart(selectedPatient, SetHeartChart, SetBreathChart, SetOxygenChart)
 
     }, [])
 
@@ -28,7 +64,9 @@ export default function Room({navigation, route}){
         const interval = setInterval(()=>{
             // Fetch userdata from localstorage and save it to a usestate
             getDataLocal(selectedPatient, SetPatient);
-        }, 1000 * 2)
+            getLastPatientChart(selectedPatient, SetHeartChart, SetBreathChart, SetOxygenChart)
+            chartData()
+        }, 1000 * 3)
 
         return () =>{
             clearInterval(interval);
@@ -36,16 +74,7 @@ export default function Room({navigation, route}){
 
     }, [])
     
-    const data = {
-        labels: ["January", "February", "March", "April", "May", "June"],
-        datasets: [
-          {
-            data: [20, 45, 28, 80, 99, 150]
-          }
-        ],
-        legend: ["Heart Rate"] // optional
-      };
-
+ 
 
     return(
         <View style={styles.container}>
@@ -54,11 +83,14 @@ export default function Room({navigation, route}){
                 <View style={styles.container}>
                 <ImageBackground source={require('../images/mainBackground.jpg')} resizeMode="cover" style={{width: screenWidth, height: 250, justifyContent: 'center', alignItems: 'center'}}>
                     {patient.map((doc) => {
-                        return(
-                            <View style={Room1Style.patientName} key={doc.id}>
-                                <Text>{doc.Name}</Text>
-                            </View>
-                        )
+                        if(doc.id == selectedPatient){
+                            return(
+                                <View style={Room1Style.patientName} key={doc.id}>
+                                    <Text>{doc.Name}</Text>
+                                </View>
+                            )
+                        }
+                       
                     })}
                       
 
@@ -72,39 +104,34 @@ export default function Room({navigation, route}){
 
                 <View style={styles.container}>
                     {patient.map((doc) =>{
+                        if(doc.id == selectedPatient){
                             return(
                                 <View style={{alignItems: 'center', justifyContent: 'center', flexDirection: 'row'}} key={doc.id}>
-                                    <View style={Room1Style.iconHeartView}>
-                                        {heartReatIcon()}
-                                        <Text>{doc.Heart}</Text>
-                                    </View>
+                                    
+                                    <TouchableOpacity style={Room1Style.iconHeartView} onPress={() => {displayNewChart(heartChart, "Heart Rate")}}>
+                                                {heartReatIcon()}
+                                                <Text>{doc.Heart}</Text>
+                                    </TouchableOpacity>
 
+                                    <TouchableOpacity style={Room1Style.iconBreathView} onPress={() => {displayNewChart(breathChart, "Breath Rate")}}>
+                                                {breathIcon()}  
+                                                <Text>{doc.Breath}</Text>
+                                    </TouchableOpacity>
 
-                                    <View style={Room1Style.iconBreathView}>
-                                        {breathIcon()}  
-                                        <Text>{doc.Breath}</Text>
-                                    </View>
-
-
-                                    <View style={Room1Style.iconOxygenView}>
-                                        {oxygenIcon()}
-                                        <Text>{doc.Oxygen}</Text>
-                                    </View>
+                                    <TouchableOpacity style={Room1Style.iconOxygenView} onPress={() => {displayNewChart(oxygenChart, "Oxygen Saturation LvL")}}>
+                                                {oxygenIcon()}
+                                                <Text>{doc.Oxygen}</Text>
+                                    </TouchableOpacity>
                             
                                 </View>
                             )
+                        }
+                         
                         })}
 
-                <LineChart
-                style={chartStyle.container}
-                data={data}
-                width={screenWidth - screenWidth * 0.05}
-                height={250}
-                chartConfig={chartConfig}
-                verticalLabelRotation={30} 
-                />   
+   
 
-
+                        {chartData()}
 
                 </View>
 

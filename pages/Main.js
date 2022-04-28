@@ -3,7 +3,7 @@ import {ImageBackground ,StyleSheet, Text, View, TouchableOpacity, Dimensions, A
 import { Button, TextInput } from 'react-native';
 import { DataTable, IconButton } from 'react-native-paper';
 import styles from '../GlobalStyles';
-import {GetPatient, GetPatientsAndStoreLocal, GetPatients, updatePatient} from '../functions/Firestore'
+import { GetPatientsAndStoreLocal,  updatePatient, addPatientChart, getLastPatientChart} from '../functions/Firestore'
 import { getRandomNumber } from '../functions/Storage';
 
   //Screen dimentions
@@ -19,6 +19,7 @@ export default function Main({navigation}){
     const [selectedPatient, setSelectedPatient] = useState("");
     const [patientData, setPatientData] = useState([]);
 
+    
     const clearSelectedPatient = async () => {
         setSelectedPatient(null);
       }
@@ -47,12 +48,14 @@ export default function Main({navigation}){
     useEffect(() =>{
 
         // Update the status of patient using random number generator
-        const updatePatientStatus = (id) =>{
+        const updatePatientStatus = (id, chart) =>{
             const updateHeart = getRandomNumber(0, 200);
             const updateBreath = getRandomNumber(0, 100);
             const updateOxygen = getRandomNumber(0, 100);
 
             updatePatient(id, updateHeart, updateBreath, updateOxygen);
+            addPatientChart(id, updateHeart, updateBreath, updateOxygen);
+            
         }
 
         // Fetch some data every minute.
@@ -60,7 +63,7 @@ export default function Main({navigation}){
             console.log("Interval");
 
             patientData.map((patient) => { 
-                updatePatientStatus(patient.id);
+                updatePatientStatus(patient.id, patient.Chart);
             })
 
             GetPatientsAndStoreLocal(setPatientData);
@@ -81,6 +84,8 @@ export default function Main({navigation}){
         
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             
+            <View style={MainStyles.topContainer}>
+
             <Text>Patient Rooms</Text>
 
                 <DataTable>
@@ -120,20 +125,40 @@ export default function Main({navigation}){
 
                 </DataTable>
 
-                <Button
-                    title="Add Patient"
-                    onPress={() => {navigation.navigate('AddPatient', {selectedPatient}); clearSelectedPatient();}}
-                />
 
-                <Button disabled={selectedPatient ? false : true}
-                    title="Edit Patient Details"
-                    onPress={() => {navigation.navigate('EditPatient', {selectedPatient}); clearSelectedPatient();}}
-                />
+            </View>
+            
 
-                <Button disabled={selectedPatient ? false : true}
-                    title="Show Details"
-                    onPress={() => {navigation.navigate('Room', {selectedPatient}); clearSelectedPatient();}}
-                />
+            <View style={MainStyles.botContainer}>
+                
+            <TouchableOpacity style={styles.ButtonContainer} onPress={() => {navigation.navigate('AddPatient', {selectedPatient}); clearSelectedPatient();}}>
+                    <Text style={styles.ButtonText}>Add Patient</Text>
+                </TouchableOpacity>
+                
+                {selectedPatient?
+            
+                    <TouchableOpacity  style={styles.ButtonContainer} disabled={selectedPatient ? false : true} onPress={() => {navigation.navigate('EditPatient', {selectedPatient}); clearSelectedPatient();}}>
+                        <Text style={styles.ButtonText}>Edit Patient Details</Text>
+                    </TouchableOpacity>
+                        
+                :
+                 <Text></Text>
+                }
+                {selectedPatient?
+                
+                <TouchableOpacity style={styles.ButtonContainer} disabled={selectedPatient ? false : true} onPress={() => {navigation.navigate('Room', {"selectedPatient": selectedPatient});  clearSelectedPatient();}}>
+                    <Text style={styles.ButtonText}>Show Details</Text>
+                </TouchableOpacity>
+                :
+                    <Text></Text>
+                }
+
+            </View>
+
+
+
+
+         
 
         </View>
     )
@@ -142,11 +167,9 @@ export default function Main({navigation}){
 
 const MainStyles = StyleSheet.create({
     topContainer: {
-        flex: 1,
+        flex: 2,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: "red",
-        borderBottomColor: "green",
         width: windowWidth,
   
         
@@ -155,7 +178,6 @@ const MainStyles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: "blue",
         width: windowWidth,
            
     }

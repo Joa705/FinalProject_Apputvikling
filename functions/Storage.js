@@ -20,7 +20,8 @@ export const getDataLocal = async (id, setData) => {
             const data = JSON.parse(temp);
 
             if(setData){
-                setData(data)
+               
+             setData(data)
             }
         }
         

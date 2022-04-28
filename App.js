@@ -4,8 +4,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import styles from './GlobalStyles';
 import Main from './pages/Main';
-import Room1 from './pages/Room1';
-import Room2 from './pages/Room2';
 import Room from './pages/Room';
 import EditPatient from './pages/EditPatient';
 import AddPatient from './pages/AddPatient';
