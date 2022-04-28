@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
     },
     ButtonContainer: {
       elevation: 4,
-      backgroundColor: "grey",
+      backgroundColor: "#B2E7F7",
       borderRadius: 4,
       paddingVertical: 5,
       paddingHorizontal: 7,
@@ -18,10 +18,10 @@ const styles = StyleSheet.create({
     },
     ButtonText: {
       fontSize: 16,
-      color: "#F0EFEF",
-      fontWeight: "bold",
+      color: "black",
       alignSelf: "center",
-      textTransform: "uppercase",
+      textTransform: 'uppercase'
+      
       
     }
   });

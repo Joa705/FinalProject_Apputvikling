@@ -58,7 +58,6 @@ export default function Room({navigation, route}){
     }, [])
 
 
-
     useEffect(() => {
 
         const interval = setInterval(()=>{
@@ -81,12 +80,12 @@ export default function Room({navigation, route}){
 
 
                 <View style={styles.container}>
-                <ImageBackground source={require('../images/mainBackground.jpg')} resizeMode="cover" style={{width: screenWidth, height: 250, justifyContent: 'center', alignItems: 'center'}}>
                     {patient.map((doc) => {
                         if(doc.id == selectedPatient){
                             return(
                                 <View style={Room1Style.patientName} key={doc.id}>
-                                    <Text>{doc.Name}</Text>
+                                    <Text style={{fontWeight: 'bold', fontSize:30}}>{doc.Name} {doc.LName}</Text>
+                                    <Text>Age: {doc.Age}</Text>
                                 </View>
                             )
                         }
@@ -94,7 +93,6 @@ export default function Room({navigation, route}){
                     })}
                       
 
-                </ImageBackground>
 
 
                 </View>
@@ -167,7 +165,7 @@ const Room1Style = StyleSheet.create({
         flex: 3,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: "#49C3C2",
+        backgroundColor: "#B2E7F7",
         borderTopEndRadius: 40,
         borderTopStartRadius: 40,
         elevation: 4,
