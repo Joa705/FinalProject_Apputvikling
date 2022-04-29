@@ -20,10 +20,7 @@ export default function AddPatient({navigation, route}){
   
 
     const addNewPatient = () => {
-      if(newName.length <= 0){return}
-      if(newLname.length <= 0){return}
-      if(newAge.length <= 0){return}
-
+      if((newName.length || newLname.length || newAge.length) <= 0){return}
       
       addPatient(navigation, newName, RoomId, newLname, newAge)
       route.params.onSelect()

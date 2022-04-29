@@ -40,18 +40,17 @@ import {storeDataLocal, getRandomNumber} from '../functions/Storage'
         const heartTemp = []
         const breathTemp = []
         const oxygenTemp = []
+      
         data.docs.map((doc) =>{
             heartTemp.push(doc.data().Heart) 
             breathTemp.push(doc.data().Breath) 
-            oxygenTemp.push(doc.data().Oxygen) 
+            oxygenTemp.push(doc.data().Oxygen)
+           
         })
-
-
 
         setHeart(heartTemp.reverse());
         setBrath(breathTemp.reverse());
         setOxygen(oxygenTemp.reverse());
-     
     }
 
 
@@ -93,3 +92,19 @@ import {storeDataLocal, getRandomNumber} from '../functions/Storage'
         await addDoc(patientRef, {"Name": newName, "LName": newLname, "Age": newAge, "Room": newRoom, "Heart": getRandomNumber(0, 200), "Breath": getRandomNumber(0, 100), "Oxygen": getRandomNumber(0, 100), Date: Timestamp.now()});
         navigation.goBack();
       };
+
+    
+    // Add new user details to firestore, id refrence from auth 
+    export const createUserFirestore = (usrId, nickName) => {
+        const docRef = doc(db, "Users", usrId);
+
+        return setDoc(docRef, {"NickName": nickName, "Role": "employer", "Date": Timestamp.now()})
+    }
+
+
+    // Get the current user infromation from firestore
+    export const getUserFirestore = (usrdId) => {
+        const docRef = doc(db, "Users", usrdId);
+
+        return getDoc(docRef)
+    }

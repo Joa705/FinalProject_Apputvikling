@@ -12,13 +12,15 @@ import { getRandomNumber } from '../functions/Storage';
 
 
 
-export default function Main({navigation}){
+export default function Main({navigation, route}){
   
-    //useStates
+    const {userName, userRole} = route.params;
+    const currUserName = userName;
+    const currUserRole = userRole;
 
+    //useStates
     const [selectedPatient, setSelectedPatient] = useState("");
     const [patientData, setPatientData] = useState([]);
-    const [test, SetTest] = useState("")
 
     
     const clearSelectedPatient = async () => {
@@ -58,7 +60,7 @@ export default function Main({navigation}){
 
 
         // Update the status of patient using random number generator
-        const updatePatientStatus = (id, chart) =>{
+        const updatePatientStatus = (id) =>{
             const updateHeart = getRandomNumber(0, 200);
             const updateBreath = getRandomNumber(0, 100);
             const updateOxygen = getRandomNumber(0, 100);
@@ -152,12 +154,19 @@ export default function Main({navigation}){
             
 
             <View style={MainStyles.botContainer}>
+
+
+                {currUserRole == "admin"?
+                        <TouchableOpacity style={styles.ButtonContainer} onPress={() => {navigation.navigate('AddPatient', {"selectedPatient" : selectedPatient, "RoomId": patientData.length + 1, "onSelect": onSelect}); clearSelectedPatient();}}>
+                            <Text style={styles.ButtonText}>Add Patient</Text>
+                        </TouchableOpacity>
+                :
+                        <Text></Text>
+                } 
+
+                <View style={{height:10}}></View>
                 
-            <TouchableOpacity style={styles.ButtonContainer} onPress={() => {navigation.navigate('AddPatient', {"selectedPatient" : selectedPatient, "RoomId": patientData.length + 1, "onSelect": onSelect}); clearSelectedPatient();}}>
-                    <Text style={styles.ButtonText}>Add Patient</Text>
-                </TouchableOpacity>
-                
-                {selectedPatient?
+                {selectedPatient && currUserRole == "admin"?          
             
                     <TouchableOpacity  style={styles.ButtonContainer} disabled={selectedPatient ? false : true} onPress={() => {navigation.navigate('EditPatient', {selectedPatient}); clearSelectedPatient();}}>
                         <Text style={styles.ButtonText}>Edit Patient Details</Text>
@@ -166,6 +175,9 @@ export default function Main({navigation}){
                 :
                  <Text></Text>
                 }
+
+                <View style={{height:10}}></View>
+
                 {selectedPatient?
                 
                 <TouchableOpacity style={styles.ButtonContainer} disabled={selectedPatient ? false : true} onPress={() => {navigation.navigate('Room', {"selectedPatient": selectedPatient});  clearSelectedPatient();}}>

@@ -12,6 +12,8 @@ import Login from './pages/Login'
 
 LogBox.ignoreLogs(['Setting a timer'])
 LogBox.ignoreLogs(['AsyncStorage has been extracted from react-native core and will be removed in a future release'])
+LogBox.ignoreLogs(['Non-serializable values were found in the navigation state.'])
+LogBox.ignoreLogs(["Warning: Can't perform a React state update on an unmounted component. This is a no-op, but it indicates a memory leak in your application. To fix"])
 
 
   // //Background image

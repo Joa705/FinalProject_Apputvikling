@@ -14,46 +14,86 @@ export default function Room({navigation, route}){
 
     const { selectedPatient } = route.params;
     const [patient, SetPatient] = useState([])
-    const [currentChart, SetCurrentChart] = useState([2,3,4,5,6])
-    const [currentChartName, SetCurrentChartName] = useState(["Heart Rate"])
+    const [currentChart, SetCurrentChart] = useState([1,1,1,1,1])
+    const [currentUsingChart, SetCurrentUsingChart] = useState({
+        labels: ["1", "2", "3", "4", "5"],
+        datasets: [
+          {
+            data: currentChart
+          }
+        ],
+        legend: currentChartName // optional
+      })
+    const [currentChartName, SetCurrentChartName] = useState([""])
     const [heartChart, SetHeartChart] = useState([])
     const [breathChart, SetBreathChart] = useState([])
     const [oxygenChart, SetOxygenChart] = useState([])
+    const [chartType, SetChartType] = useState("")
 
-
+    
+    // When user clicks button, display the chosen chart on the screen
     const displayNewChart = (newChart, name) => {
-        SetCurrentChart(newChart);
-        SetCurrentChartName([name])
-    }
+        if(name == "Heart Rate"){SetChartType(["Heart", "Heart Rate"])}
+        if(name == "Breath Rate"){SetChartType(["Breath", "Breath Rate"])}
+        if(name == "Oxygen Saturation LvL"){SetChartType(["Oxygen", "Oxygen Saturation LvL"])}
 
-    const chartData = () => {
-        const data = {
+        SetCurrentUsingChart({
             labels: ["1", "2", "3", "4", "5"],
             datasets: [
               {
-                data: currentChart
+                data: newChart
               }
             ],
-            legend: currentChartName // optional
-          };
-          
-          return(
-            <LineChart
-            style={chartStyle.container}
-            data={data}
-            width={screenWidth - screenWidth * 0.05}
-            height={250}
-            chartConfig={chartConfig}
-            verticalLabelRotation={0} 
-            />
-          )
+            legend: [name] // optional
+          });
     }
-  
 
+
+    // Update the current chart 
+    const updateChartDisplay = () => {
+        if(chartType[0] == "Heart"){
+            SetCurrentUsingChart({
+                labels: ["1", "2", "3", "4", "5"],
+                datasets: [
+                  {
+                    data: heartChart
+                  }
+                ],
+                legend: [chartType[1]] // optional
+              });
+        }
+        if(chartType[0] == "Breath"){
+            SetCurrentUsingChart({
+                labels: ["1", "2", "3", "4", "5"],
+                datasets: [
+                  {
+                    data: breathChart
+                  }
+                ],
+                legend: [chartType[1]] // optional
+              });
+        }
+        if(chartType[0] == "Oxygen"){
+            SetCurrentUsingChart({
+                labels: ["1", "2", "3", "4", "5"],
+                datasets: [
+                  {
+                    data: oxygenChart
+                  }
+                ],
+                legend: [chartType[1]] // optional
+              });
+        }
+        console.log("updateing chart")
+      
+    } 
+
+  
 
     useEffect(() => {
         getDataLocal(selectedPatient, SetPatient);
-        getLastPatientChart(selectedPatient, SetHeartChart, SetBreathChart, SetOxygenChart)
+        getLastPatientChart(selectedPatient, SetHeartChart, SetBreathChart, SetOxygenChart);
+        
 
     }, [])
 
@@ -64,14 +104,17 @@ export default function Room({navigation, route}){
             // Fetch userdata from localstorage and save it to a usestate
             getDataLocal(selectedPatient, SetPatient);
             getLastPatientChart(selectedPatient, SetHeartChart, SetBreathChart, SetOxygenChart)
-            chartData()
-        }, 1000 * 3)
+            updateChartDisplay()
+
+          
+
+        }, 1000 * 2)
 
         return () =>{
             clearInterval(interval);
         }
 
-    }, [])
+    }, [heartChart, breathChart, oxygenChart, chartType])
     
  
 
@@ -127,9 +170,15 @@ export default function Room({navigation, route}){
                          
                         })}
 
-   
 
-                        {chartData()}
+                    <LineChart
+                    style={chartStyle.container}
+                    data={currentUsingChart}
+                    width={screenWidth - screenWidth * 0.05}
+                    height={250}
+                    chartConfig={chartConfig}
+                    verticalLabelRotation={0} 
+                    />
 
                 </View>
 

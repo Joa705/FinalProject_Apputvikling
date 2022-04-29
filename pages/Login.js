@@ -3,6 +3,7 @@ import { StyleSheet, Text, TextInput, View, Button, TouchableOpacity, Image } fr
 import styles from '../GlobalStyles';
 import { authentication, db } from '../Firebase-config';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut} from 'firebase/auth'
+import {createUserFirestore, getUserFirestore} from '../functions/Firestore'
 
 export default function Login({navigation}){
 
@@ -12,23 +13,31 @@ export default function Login({navigation}){
     const [password, setPassword] = useState('Passord1');
     const [email, setEmail] = useState('jojo@hotmail.com');
 
-    // Navigate to game and set allbuttons to not owned
-    const navigatoinhandler = () => {
-  
-        navigation.navigate('Main');
+    const navigatoinhandler = (userName, userRole) => {
+        if(authentication.currentUser){
+            navigation.navigate('Main', {"userName": userName, "userRole": userRole});
+        }
     }
 
     //Sign in to user account
     const signinUser = () => {
         signInWithEmailAndPassword(authentication, email, password)
         .then((re) => {
-            setIssignedin(true);
-            navigatoinhandler();
+            getUserFirestore(re.user.uid)
+            .then((res) => {
+                const usrNameTemp = res.data().NickName;
+                const roleTemp = res.data().Role;
+                setIssignedin(true);
+                navigatoinhandler(usrNameTemp, roleTemp);
+            })
+            .catch((err) => console.log(err))
+
         })
         .catch((re) => {
             console.log("failed to login")
         })
     };
+
 
     //sign out user
     const signoutUser = () => {
@@ -39,15 +48,16 @@ export default function Login({navigation}){
         .catch((re) => {console.log("failed to sign out")})
     };
 
-    //Register a new user account, then redirect to game page
+
+
+
+    // Register new user and set role for that user in firestore
     const registerUser = () => {
         createUserWithEmailAndPassword(authentication, email, password)
         .then((re) =>{
-             console.log("User registert");
-             createnewUser().then((re) =>{
-                setIssignedin(true);
-                navigatoinhandler();
-             }).catch((re) => {console.log("failed to add user in firestore")})
+            createUserFirestore(re.user.uid, username)
+            .then(() => {console.log("User created"); setIssignedin(true);})
+            .catch(() => console.log("Failed to create user"))
              
             })
         .catch((re) => {console.log("Failed to register user")})
@@ -113,14 +123,6 @@ export default function Login({navigation}){
 
             <View style={{height:20}}></View>
 
-            {isSignedin === true?
-                <TouchableOpacity style={styles.ButtonContainer} onPress={() => {navigation.navigate('Main')}}>
-                    <Text style={styles.ButtonText}>Go to game</Text>
-                </TouchableOpacity>
-                :
-                <Text></Text>                
-
-            }
             </View>
             
            
