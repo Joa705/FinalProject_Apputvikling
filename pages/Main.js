@@ -61,9 +61,11 @@ export default function Main({navigation, route}){
 
         // Update the status of patient using random number generator
         const updatePatientStatus = (id) =>{
-            const updateHeart = getRandomNumber(0, 200);
-            const updateBreath = getRandomNumber(0, 100);
-            const updateOxygen = getRandomNumber(0, 100);
+            const updateHeart = getRandomNumber(60, 220, 0.3);
+            const updateBreath = getRandomNumber(2, 30, 0.3);
+            const updateOxygen = getRandomNumber(90, 100, 0.15);
+
+            
 
             updatePatient(id, updateHeart, updateBreath, updateOxygen);
             addPatientChart(id, updateHeart, updateBreath, updateOxygen);
@@ -81,7 +83,7 @@ export default function Main({navigation, route}){
             GetPatientsAndStoreLocal(setPatientData);
 
                   
-        }, 1000 * 60)
+        }, 1000 * 5)
 
         return () => {
             clearInterval(Interval)
