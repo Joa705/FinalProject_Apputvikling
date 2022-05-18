@@ -16,11 +16,13 @@ export const chartStyle = StyleSheet.create({
 })
 
 export const chartConfig = {
-    backgroundGradientFrom: "#1E2923",
+    backgroundGradientFrom: "#FFFFFF",
     backgroundGradientFromOpacity: 0,
-    backgroundGradientTo: "#08130D",
-    backgroundGradientToOpacity: 0.6,
-    color: (opacity = 1) => `rgba(241, 164, 42, ${opacity})`,
-    labelColor: (opacity = 1) => `rgba(0, 0, 0)`,
+    backgroundGradientTo: "#FFFFFF",
+    backgroundGradientToOpacity: 0,
+    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+    strokeWidth: 2, // optional, default 3
+    barPercentage: 0.5,
+    useShadowColorFromDataset: false // optional
 
   };

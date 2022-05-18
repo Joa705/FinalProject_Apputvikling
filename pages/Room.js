@@ -53,7 +53,7 @@ export default function Room({navigation, route}){
     const updateChartDisplay = () => {
         if(chartType[0] == "Heart"){
             SetCurrentUsingChart({
-                labels: ["1", "2", "3", "4", "5"],
+                labels: ["15", "14", "13", "12", "11", "10", "9", "8", "7", "6", "5", "4", "3", "2", "1"],
                 datasets: [
                   {
                     data: heartChart
@@ -64,7 +64,7 @@ export default function Room({navigation, route}){
         }
         if(chartType[0] == "Breath"){
             SetCurrentUsingChart({
-                labels: ["1", "2", "3", "4", "5"],
+                labels: ["15", "14", "13", "12", "11", "10", "9", "8", "7", "6", "5", "4", "3", "2", "1"],
                 datasets: [
                   {
                     data: breathChart
@@ -75,7 +75,7 @@ export default function Room({navigation, route}){
         }
         if(chartType[0] == "Oxygen"){
             SetCurrentUsingChart({
-                labels: ["1", "2", "3", "4", "5"],
+                labels: ["15", "14", "13", "12", "11", "10", "9", "8", "7", "6", "5", "4", "3", "2", "1"],
                 datasets: [
                   {
                     data: oxygenChart
@@ -84,7 +84,7 @@ export default function Room({navigation, route}){
                 legend: [chartType[1]] // optional
               });
         }
-        console.log("updateing chart")
+        console.log("updating chart")
       
     } 
 
@@ -94,6 +94,7 @@ export default function Room({navigation, route}){
         getDataLocal(selectedPatient, SetPatient);
         getLastPatientChart(selectedPatient, SetHeartChart, SetBreathChart, SetOxygenChart);
         
+        displayNewChart(heartChart, "Heart Rate")
 
     }, [])
 
@@ -108,7 +109,7 @@ export default function Room({navigation, route}){
 
           
 
-        }, 1000 * 2)
+        }, 1000 * 3)
 
         return () =>{
             clearInterval(interval);

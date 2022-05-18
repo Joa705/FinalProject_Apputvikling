@@ -33,7 +33,7 @@ import {storeDataLocal, getRandomNumber} from '../functions/Storage'
 
     export const getLastPatientChart = async (patientId, setHeart, setBrath, setOxygen) => {
         const docRef = collection(db, "XYZ", patientId, "Chart")
-        const q = query(docRef, orderBy("Date", "desc"), limit(5));
+        const q = query(docRef, orderBy("Date", "desc"), limit(15));
         
         const data = await getDocs(q)
 
