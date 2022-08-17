@@ -1,2 +1,2 @@
-- Patient monitoring app using React native and firestore database
+- Hospital Patient monitoring app using React native and firestore database
 
